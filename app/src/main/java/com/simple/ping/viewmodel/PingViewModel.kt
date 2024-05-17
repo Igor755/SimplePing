@@ -1,10 +1,7 @@
 package com.simple.ping.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.marsounjan.icmp4a.Icmp
@@ -18,11 +15,12 @@ class PingViewModel : ViewModel() {
     var text = mutableStateOf("Please press button start ping - 8.8.8.8")
     var job: Job? = null
     var interval = mutableStateOf("500")
+    var enabledStart = mutableStateOf(true)
+    var enabledStop = mutableStateOf(false)
 
     fun startPing() {
         val host = "google.com"
         val icmp = Icmp4a()
-        println(interval.value)
         if (interval.value.isEmpty()){
             interval.value = "500"
         }

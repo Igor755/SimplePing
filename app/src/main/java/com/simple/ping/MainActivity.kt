@@ -23,7 +23,6 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,8 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Yellow
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -73,7 +70,7 @@ fun CreateButton(pingViewModel: PingViewModel? = null) {
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFF011901),
+                        Color(0xFF072939),
                         Color(0xFFaeaeae)
                     )
                 )
@@ -85,7 +82,7 @@ fun CreateButton(pingViewModel: PingViewModel? = null) {
                 .wrapContentSize()
         ) {
             Image(
-                painter = painterResource(R.drawable.unnamed),
+                painter = painterResource(R.drawable.fdr),
                 contentDescription = null,
                 modifier = Modifier
                     .height(200.dp)
@@ -110,12 +107,15 @@ fun CreateButton(pingViewModel: PingViewModel? = null) {
                     if (it.length <= 6) {
                         if (it.isDigitsOnly()) text = it
                         pingViewModel?.interval?.value = it
-                    }},
+                    }
+                },
                 maxLines = 1,
                 singleLine = true,
-                label = { Text(
-                    "Interval in ms default = 500 (max 6 symbols)",
-                    style = TextStyle(color = Color.White))
+                label = {
+                    Text(
+                        "Interval in ms default = 500 (max 6 symbols)",
+                        style = TextStyle(color = Color.White)
+                    )
                 }
             )
         }
@@ -140,36 +140,76 @@ fun CreateButton(pingViewModel: PingViewModel? = null) {
             verticalArrangement = Arrangement.Bottom
         )
         {
-            createCared("Start Ping", pingViewModel)
-            createCared("Stop Ping", pingViewModel)
+            createCardStartPing("Start Ping", pingViewModel)
+            createCardStopPing("Stop Ping", pingViewModel)
         }
     }
 }
+
 @Composable
-private fun createCared(text : String, pingViewModel: PingViewModel? = null){
+private fun createCardStartPing(text: String, pingViewModel: PingViewModel? = null) {
     val mosteratFontFamily = FontFamily(Font(R.font.mosterat))
     val gradient = Brush.horizontalGradient(
         listOf(
-            Color(0xFF011901),
-            Color(0xFF384938)
+            Color(0xFF072939),
+            Color(0xFF0f303f)
         )
     )
     ElevatedCard(elevation = CardDefaults.cardElevation(
         defaultElevation = 10.dp
-    ),modifier = Modifier
+    ), modifier = Modifier
         .fillMaxWidth()
         .padding(10.dp)
         .height(50.dp)
         .clip(RoundedCornerShape(30.dp))
         .background(gradient)
-        .clickable (enabled = true){
-            if (text == "Start Ping"){
-                pingViewModel?.startPing()
-                pingViewModel?.text?.value = "Start ping - 8.8.8.8"
-            } else {
-                pingViewModel?.job?.cancel()
-                pingViewModel?.text?.value = "Please press button start ping - 8.8.8.8"
-            }
+        .clickable(enabled = pingViewModel?.enabledStart!!.value) {
+            pingViewModel.startPing()
+            pingViewModel.text.value = "Start ping - 8.8.8.8"
+            pingViewModel.enabledStart.value = false
+            pingViewModel.enabledStop.value = true
+        }) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .background(gradient)
+                .clip(RoundedCornerShape(30.dp))
+        ) {
+            Text(
+                color = Color.White,
+                text = text,
+                fontFamily = mosteratFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 20.sp,
+                modifier = Modifier.align(Center)
+            )
+        }
+    }
+}
+
+@Composable
+private fun createCardStopPing(text: String, pingViewModel: PingViewModel? = null) {
+    val mosteratFontFamily = FontFamily(Font(R.font.mosterat))
+    val gradient = Brush.horizontalGradient(
+        listOf(
+            Color(0xFF072939),
+            Color(0xFF0f303f)
+        )
+    )
+    ElevatedCard(elevation = CardDefaults.cardElevation(
+        defaultElevation = 10.dp
+    ), modifier = Modifier
+        .fillMaxWidth()
+        .padding(10.dp)
+        .height(50.dp)
+        .clip(RoundedCornerShape(30.dp))
+        .background(gradient)
+        .clickable(enabled = pingViewModel?.enabledStop!!.value) {
+            pingViewModel.job?.cancel()
+            pingViewModel.text.value = "Please press button start ping - 8.8.8.8"
+            pingViewModel.enabledStop.value = false
+            pingViewModel.enabledStart.value = true
         }) {
         Box(
             modifier = Modifier
