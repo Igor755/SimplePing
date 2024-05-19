@@ -2,6 +2,7 @@ package com.simple.ping.viewmodel
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.marsounjan.icmp4a.Icmp
@@ -22,6 +23,9 @@ class PingViewModel : ViewModel() {
         val host = "google.com"
         val icmp = Icmp4a()
         if (interval.value.isEmpty()){
+            interval.value = "500"
+        }
+        if (!interval.value.isDigitsOnly()){
             interval.value = "500"
         }
         try {
